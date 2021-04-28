@@ -1,6 +1,5 @@
 package com.example.Schedule
 
-import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.data.annotation.Id
 import org.springframework.data.jpa.repository.Temporal
 import org.springframework.data.relational.core.mapping.Column
@@ -10,7 +9,6 @@ import javax.persistence.TemporalType
 
 // объектное представление данных в бд
 
-@EntityScan
 @Table("schedule")
 data class ScheduleList(
     @Id
