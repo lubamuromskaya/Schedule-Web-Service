@@ -22,9 +22,9 @@ interface ScheduleRepository : CrudRepository<ScheduleList, Int> {
     @Query("delete from schedule where employee_id = :empId and responsibility_id = :respId")
     fun delete(empId: Int, respId: Int)
 
-    fun updateEmp(respId: Int, oldEmpId: Int, newEmpId: Int)
+    //fun updateEmp(respId: Int, oldEmpId: Int, newEmpId: Int)
 
-    fun updateResp(empId: Int, oldRespId: Int, newRespId:Int)
+    //fun updateResp(empId: Int, oldRespId: Int, newRespId:Int)
 }
 
 
@@ -33,11 +33,8 @@ interface ResponsibilitiesRepository: CrudRepository<Responsibility, Int> {
     @Query("select * from responsibilities")
     fun getRespList(): List<Responsibility>?
 
-    @Query("select responsibility_name from responsibilities where responsibility_id = :id")
-    fun getNameById(id: Int): Responsibility?
-
-    @Query("select responsibility_id from responsibilities where responsibility_name = :name")
-    fun getIdByName(name: String): Responsibility?
+    @Query("select * from responsibilities where responsibility_id = :id")
+    fun getRespById(id: Int): Responsibility?
 }
 
 
@@ -47,9 +44,5 @@ interface EmployeeRepository: CrudRepository<Employee, Int> {
 
     @Query("select * from employee where employee_id = :id")
     fun getEmpById(id: Int): Employee?
-
-    @Query("delete from employee where employee_id = :id")
-    fun deleteEmp(id: Int)
-
 
 }

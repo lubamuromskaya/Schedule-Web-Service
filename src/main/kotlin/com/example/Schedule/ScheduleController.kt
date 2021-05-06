@@ -1,8 +1,8 @@
 package com.example.Schedule
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -10,15 +10,17 @@ import java.time.format.DateTimeFormatter
 // containing a collection of Schedule objects
 @RestController
 class ScheduleController(val scheduleService: ScheduleService) {
-    @GetMapping("/info")
+    @GetMapping("/schedule")
     fun getAllInfo(): List<ScheduleList>? = scheduleService.getAll()
 
 
-    @GetMapping("/find_by_resp/{id}")
+    // TODO: change request type to json - ?
+    @GetMapping("/schedule/resp/{id}")
     fun findByResp(@PathVariable("id") id: Int): ScheduleList? = scheduleService.getEmpByResp(id)
 
 
-    @GetMapping("/find_by_date/{year}/{month}/{day}")
+    // TODO: change request type to json - ?
+    @GetMapping("/schedule/date/{year}/{month}/{day}")
     fun findByDate(@PathVariable("year") year: String,
                    @PathVariable("month") month: String,
                    @PathVariable("day") day: String): ScheduleList? {
@@ -28,7 +30,8 @@ class ScheduleController(val scheduleService: ScheduleService) {
     }
 
 
-    @GetMapping("/find_by_date_and_resp/{year}/{month}/{day}/{id}")
+    // TODO: change request type to json - ?
+    @GetMapping("/schedule/resp/{id}/date/{year}/{month}/{day}/{id}")
     fun findByDateAndResp(@PathVariable("year") year: String,
                           @PathVariable("month") month: String,
                           @PathVariable("day") day: String,
@@ -39,52 +42,56 @@ class ScheduleController(val scheduleService: ScheduleService) {
     }
 
 
-    // TODO: check for correct working
-    @GetMapping("/delete/emp/{emp_id}/resp/{resp_id}")
-    fun deleteEmpByRespId(@PathVariable("emp_id") emp_id: Int,
-                          @PathVariable("resp_id") resp_id: Int) = scheduleService.delete(emp_id, resp_id)
+
+    // TODO: update (patch)
 }
+
 
 @RestController
 class RespController(val respService: ResponsibilitiesService) {
-    @GetMapping("/resp_list")
-    fun getRespList(): List<Responsibility>? {
-        return respService.getRespList()
-    }
+    @GetMapping("/responsibilities")
+    fun getRespList(): List<Responsibility>? = respService.getRespList()
 
-    // TODO: works incorrectly
-    @GetMapping("/resp_list/id/{id}")
-    fun getNameById(@PathVariable("id") id: Int): Responsibility? {
-        return respService.getNameById(id)
-    }
 
-    // TODO: doesnt work
-    @GetMapping("/resp_list/name/{name}")
-    fun getIdByName(@PathVariable("name") name: String): Responsibility? {
-        return respService.getIdByName(name)
-    }
+    @GetMapping("/responsibilities/{id}")
+    fun getRespById(@PathVariable("id") id: Int): Responsibility?
+        = respService.getRespById(id) ?: throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist")
 
-    // TODO: POST
 
-    // TODO: DELETE
+    @PostMapping("/responsibilities")
+    @ResponseBody
+    fun postNewResp(@RequestBody newResp: Responsibility): Responsibility = respService.postNewResp(newResp)
+
+
+    @DeleteMapping("responsibilities/{id}")
+    fun deleteResp(@PathVariable("id") id: Int) = respService.deleteResp(id)
+
+    // TODO: update (patch)
 }
 
+
+@RestController
+@RequestMapping
 class EmployeeController(val empService: EmployeeService) {
     @GetMapping("/employees")
     fun getEmpList(): List<Employee>? = empService.getEmpList()
 
+
     @GetMapping("/employees/{id}")
-    fun getEmpById(@PathVariable("id") id: Int): Employee? = empService.getEmpById(id)
+    fun getEmpById(@PathVariable("id") id: Int): Employee?
+        = empService.getEmpById(id) ?: throw ResponseStatusException(NOT_FOUND, "This employee does not exist")
 
-    // TODO: POST
 
-    // TODO: DELETE
-}
+    @PostMapping("/employees")
+    @ResponseBody
+    fun postNewEmp(@RequestBody emp: Employee): Employee {
+        return empService.postNewEmp(emp)
+    }
 
-@RestController
-class MainController(val scheduleService: ScheduleService, val respService: ResponsibilitiesService,
-                     val empService: EmployeeService) {
-    // TODO: POST
 
-    // TODO: DELETE
+    @DeleteMapping("employees/{id}")
+    fun deleteEmp(@PathVariable("id") id: Int) = empService.deleteEmp(id)
+
+
+    // TODO: update (patch)
 }

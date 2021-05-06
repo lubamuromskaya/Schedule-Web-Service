@@ -8,7 +8,7 @@ class ScheduleService(val db: ScheduleRepository) {
     // get full Schedule table with all information
     fun getAll(): List<ScheduleList>? = db.getAllInfo()
 
-    // get employee by date
+    // get employees with their responsibilities by date
     fun getEmpByDate(date: LocalDate): ScheduleList? = db.getEmpByDate(date)
 
     // get employee by responsibility id
@@ -17,24 +17,27 @@ class ScheduleService(val db: ScheduleRepository) {
     // get employee by date and responsibility id
     fun getEmpByDateAndResp(date: LocalDate, respId: Int): ScheduleList? = db.getEmpByDateAndResp(date, respId)
 
+    // delete employee with his responsibility from Schedule
     fun delete(empId: Int, respId: Int) = db.delete(empId, respId)
 
-    // post new employee with responsibility, date of starting and date of ending into table Schedule
+    // post new employee with responsibility, date of starting and date of ending in Schedule
     fun post(newSchedule: ScheduleList) = db.save(newSchedule) // using default save method
 
 }
 
 @Service
 class ResponsibilitiesService(val db: ResponsibilitiesRepository) {
+    // get list of responsibilities
     fun getRespList(): List<Responsibility>? = db.getRespList()
 
-    fun getNameById(id: Int): Responsibility? = db.getNameById(id)
+    // get responsibility by id
+    fun getRespById(id: Int): Responsibility? = db.getRespById(id)
 
-    fun getIdByName(name: String): Responsibility? = db.getIdByName(name)
+    // post new responsibility
+    fun postNewResp(newResp: Responsibility): Responsibility = db.save(newResp) // using default save method
 
+    // delete responsibility by id
     fun deleteResp(id: Int) = db.deleteById(id) // using default delete method
-
-    fun post(newResp: Responsibility) = db.save(newResp) // using default save method
 
 }
 
@@ -44,7 +47,7 @@ class EmployeeService(val db: EmployeeRepository) {
 
     fun getEmpById(id: Int): Employee? = db.getEmpById(id)
 
-    fun deleteEmp(id: Int) = db.deleteById(id) // using default delete method
+    fun postNewEmp(emp: Employee) = db.save(emp)
 
-    fun post(newEmp: Employee) = db.save(newEmp) // using default save method
+    fun deleteEmp(id: Int) = db.deleteById(id) // using default delete method
 }
