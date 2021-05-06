@@ -1,5 +1,6 @@
 package com.example.Schedule
 
+import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import java.time.LocalDate
@@ -35,6 +36,10 @@ interface ResponsibilitiesRepository: CrudRepository<Responsibility, Int> {
 
     @Query("select * from responsibilities where responsibility_id = :id")
     fun getRespById(id: Int): Responsibility?
+
+    @Modifying
+    @Query("update responsibilities set responsibility_name = :name where responsibility_id = :id;")
+    fun updateResp(id: Int, name: String)
 }
 
 
@@ -42,7 +47,17 @@ interface EmployeeRepository: CrudRepository<Employee, Int> {
     @Query("select * from employee")
     fun getEmpList(): List<Employee>?
 
-    @Query("select * from employee where employee_id = :id")
+    @Query("select * from employee where employee_id = :id;")
     fun getEmpById(id: Int): Employee?
+
+    @Query("select * from employee order by employee_id asc")
+    fun ascendingSortById(): List<Employee>?
+
+    @Query("select * from employee order by employee_id desc")
+    fun descendingSortById(): List<Employee>?
+
+    @Modifying
+    @Query("update employee set employee_name = :name where employee_id = :id;")
+    fun updateEmp(id: Int, name: String)
 
 }

@@ -6,8 +6,6 @@ import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-// MessageResource will serve the requests and return a JSON document
-// containing a collection of Schedule objects
 @RestController
 class ScheduleController(val scheduleService: ScheduleService) {
     @GetMapping("/schedule")
@@ -63,10 +61,26 @@ class RespController(val respService: ResponsibilitiesService) {
     fun postNewResp(@RequestBody newResp: Responsibility): Responsibility = respService.postNewResp(newResp)
 
 
-    @DeleteMapping("responsibilities/{id}")
-    fun deleteResp(@PathVariable("id") id: Int) = respService.deleteResp(id)
+    @DeleteMapping("/responsibilities/{id}")
+    fun deleteResp(@PathVariable("id") id: Int) {
+        if (respService.getRespById(id) == null)
+            throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist")
+        else
+            respService.deleteResp(id)
+    }
 
-    // TODO: update (patch)
+
+    @PatchMapping("/responsibilities")
+    @ResponseBody
+    fun updateEmp(@RequestBody resp: Responsibility) {
+        val id: Int = resp.responsibility_id
+        val name: String = resp.responsibility_name
+        if (respService.getRespById(id) == null)
+            throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist")
+        else {
+            respService.updateResp(id, name)
+        }
+    }
 }
 
 
@@ -89,9 +103,50 @@ class EmployeeController(val empService: EmployeeService) {
     }
 
 
-    @DeleteMapping("employees/{id}")
-    fun deleteEmp(@PathVariable("id") id: Int) = empService.deleteEmp(id)
+    @DeleteMapping("/employees/{id}")
+    fun deleteEmp(@PathVariable("id") id: Int) {
+        if (empService.getEmpById(id) == null)
+            throw ResponseStatusException(NOT_FOUND, "This employee does not exist")
+        else
+            empService.deleteEmp(id)
+    }
 
 
-    // TODO: update (patch)
+    @PatchMapping("/employees")
+    @ResponseBody
+    fun updateEmp(@RequestBody emp: Employee) {
+        val id: Int = emp.employee_id
+        val name: String = emp.employee_name
+        if (empService.getEmpById(id) == null)
+            throw ResponseStatusException(NOT_FOUND, "This employee does not exist")
+        else {
+            empService.updateEmp(id, name)
+        }
+    }
+
+
+    @GetMapping("/employees/ordering")
+    fun sort(@RequestParam("by") orderType: String): List<Employee>? {
+        if (orderType.contentEquals("asc"))
+            return empService.ascSortById()
+        else if (orderType.contentEquals("desc"))
+            return empService.descSortById()
+
+        return empService.getEmpList()
+    }
+
+
+
+    /*
+    @GetMapping("/employees/ordering/{order}")
+    fun sort(@PathVariable("order") orderType: String): List<Employee>? {
+        if (orderType.contentEquals("asc"))
+            return empService.ascSortById()
+        else if (orderType.contentEquals("desc"))
+            return empService.descSortById()
+
+        return empService.getEmpList()
+    }
+
+    */
 }

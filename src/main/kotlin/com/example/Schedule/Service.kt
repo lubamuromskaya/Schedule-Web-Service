@@ -39,6 +39,8 @@ class ResponsibilitiesService(val db: ResponsibilitiesRepository) {
     // delete responsibility by id
     fun deleteResp(id: Int) = db.deleteById(id) // using default delete method
 
+    fun updateResp(id: Int, name: String) = db.updateResp(id, name)
+
 }
 
 @Service
@@ -50,4 +52,10 @@ class EmployeeService(val db: EmployeeRepository) {
     fun postNewEmp(emp: Employee) = db.save(emp)
 
     fun deleteEmp(id: Int) = db.deleteById(id) // using default delete method
+
+    fun updateEmp(id: Int, name: String) = db.updateEmp(id, name)
+
+    fun ascSortById(): List<Employee>? = db.ascendingSortById()
+
+    fun descSortById(): List<Employee>? = db.descendingSortById()
 }
