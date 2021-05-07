@@ -62,4 +62,8 @@ class EmployeeService(val db: EmployeeRepository) {
     fun ascSortById(): List<Employee>? = db.ascendingSortById()
 
     fun descSortById(): List<Employee>? = db.descendingSortById()
+
+    fun ascSortByName(): List<Employee>? = db.ascendingSortByName()
+
+    fun descSortByName(): List<Employee>? = db.descendingSortByName()
 }

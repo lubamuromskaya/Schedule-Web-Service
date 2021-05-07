@@ -103,6 +103,10 @@ class EmployeeController(val empService: EmployeeService) {
             return empService.ascSortById()
         if (orderType.contentEquals("-id"))
             return empService.descSortById()
+        if (orderType.contentEquals("name"))
+            return empService.ascSortByName()
+        if (orderType.contentEquals("-name"))
+            return empService.descSortByName()
         return empService.getEmpList()
     }
 

@@ -62,6 +62,12 @@ interface EmployeeRepository: CrudRepository<Employee, Int> {
     @Query("select * from employee order by employee_id desc")
     fun descendingSortById(): List<Employee>?
 
+    @Query("select * from employee order by employee_name asc")
+    fun ascendingSortByName(): List<Employee>?
+
+    @Query("select * from employee order by employee_name desc")
+    fun descendingSortByName(): List<Employee>?
+
     @Modifying
     @Query("update employee set employee_name = :name where employee_id = :id;")
     fun updateEmp(id: Int, name: String)
