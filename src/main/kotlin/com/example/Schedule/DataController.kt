@@ -37,6 +37,12 @@ interface ResponsibilitiesRepository: CrudRepository<Responsibility, Int> {
     @Query("select * from responsibilities where responsibility_id = :id")
     fun getRespById(id: Int): Responsibility?
 
+    @Query("select * from responsibilities order by responsibility_id asc")
+    fun ascendingSortById(): List<Responsibility>?
+
+    @Query("select * from responsibilities order by responsibility_id desc")
+    fun descendingSortById(): List<Responsibility>?
+
     @Modifying
     @Query("update responsibilities set responsibility_name = :name where responsibility_id = :id;")
     fun updateResp(id: Int, name: String)

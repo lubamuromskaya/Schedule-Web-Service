@@ -48,7 +48,15 @@ class ScheduleController(val scheduleService: ScheduleService) {
 @RestController
 class RespController(val respService: ResponsibilitiesService) {
     @GetMapping("/responsibilities")
-    fun getRespList(): List<Responsibility>? = respService.getRespList()
+    fun getRespList(@RequestParam("ordering") orderType: String?): List<Responsibility>? {
+        if (orderType.isNullOrEmpty())
+            return respService.ascSortById()
+        if (orderType.contentEquals("id"))
+            return respService.ascSortById()
+        if (orderType.contentEquals("-id"))
+            return respService.descSortById()
+        return respService.getRespList()
+    }
 
 
     @GetMapping("/responsibilities/{id}")
@@ -88,7 +96,15 @@ class RespController(val respService: ResponsibilitiesService) {
 @RequestMapping
 class EmployeeController(val empService: EmployeeService) {
     @GetMapping("/employees")
-    fun getEmpList(): List<Employee>? = empService.getEmpList()
+    fun getEmpList(@RequestParam("ordering") orderType: String?): List<Employee>? {
+        if (orderType.isNullOrEmpty())
+            return empService.ascSortById()
+        if (orderType.contentEquals("id"))
+            return empService.ascSortById()
+        if (orderType.contentEquals("-id"))
+            return empService.descSortById()
+        return empService.getEmpList()
+    }
 
 
     @GetMapping("/employees/{id}")
@@ -125,8 +141,9 @@ class EmployeeController(val empService: EmployeeService) {
     }
 
 
-    @GetMapping("/employees/ordering")
-    fun sort(@RequestParam("by") orderType: String): List<Employee>? {
+    /*
+    @GetMapping("/employees")
+    fun sort(@RequestParam("ordering") orderType: String): List<Employee>? {
         if (orderType.contentEquals("asc"))
             return empService.ascSortById()
         else if (orderType.contentEquals("desc"))
@@ -135,9 +152,6 @@ class EmployeeController(val empService: EmployeeService) {
         return empService.getEmpList()
     }
 
-
-
-    /*
     @GetMapping("/employees/ordering/{order}")
     fun sort(@PathVariable("order") orderType: String): List<Employee>? {
         if (orderType.contentEquals("asc"))

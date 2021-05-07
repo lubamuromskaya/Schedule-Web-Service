@@ -30,6 +30,10 @@ class ResponsibilitiesService(val db: ResponsibilitiesRepository) {
     // get list of responsibilities
     fun getRespList(): List<Responsibility>? = db.getRespList()
 
+    fun ascSortById(): List<Responsibility>? = db.ascendingSortById()
+
+    fun descSortById(): List<Responsibility>? = db.descendingSortById()
+
     // get responsibility by id
     fun getRespById(id: Int): Responsibility? = db.getRespById(id)
 
