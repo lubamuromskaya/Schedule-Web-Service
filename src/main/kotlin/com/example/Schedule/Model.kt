@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.jpa.repository.Temporal
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
-import java.sql.Date
+import java.time.LocalDate
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.TemporalType
@@ -15,19 +15,22 @@ import javax.persistence.TemporalType
 data class ScheduleList(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column("id")
+    val id: Int = 0,
+
     @Column("employee_id")
-    val employee_id: Int = 0,
+    val employee_id: Int,
 
     @Column("responsibility_id")
     val responsibility_id: Int,
 
     @Column("responsibility_start")
     @Temporal(TemporalType.DATE)
-    val responsibility_start: Date,
+    var responsibility_start: LocalDate,
 
     @Column("responsibility_end")
     @Temporal(TemporalType.DATE)
-    val responsibility_end: Date
+    var responsibility_end: LocalDate = LocalDate.now()
 )
 
 @Table("responsibilities")
@@ -38,7 +41,10 @@ data class Responsibility(
     val responsibility_id: Int = 0,
 
     @Column("responsibility_name")
-    val responsibility_name: String
+    val responsibility_name: String,
+
+    @Column("days_number")
+    val days_number: Int
 )
 
 
