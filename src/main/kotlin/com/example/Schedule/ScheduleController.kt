@@ -1,11 +1,12 @@
 package com.example.Schedule
 
+import org.springframework.data.relational.core.conversion.DbActionExecutionException
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.jdbc.UncategorizedSQLException
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @RestController
 class ScheduleController(val scheduleService: ScheduleService,
@@ -24,34 +25,39 @@ class ScheduleController(val scheduleService: ScheduleService,
 
     @GetMapping("/schedule/getEmp")
     fun findByEmpId(@RequestParam("id") id: Int): List<ScheduleList>? {
-        return scheduleService.getAllByEmpId(id)
-            ?: throw ResponseStatusException(NOT_FOUND, "This employee does not exist in this table.")
+        val answer = scheduleService.getAllByEmpId(id)
+        if (answer.isNullOrEmpty())
+            throw ResponseStatusException(NOT_FOUND, "This employee does not exist in this table.")
+        else
+            return answer
     }
 
 
     @GetMapping("/schedule/getResp")
     fun findByResp(@RequestParam("id") id: Int): List<ScheduleList>? {
-        return scheduleService.getEmpByResp(id)
-            ?: throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist in this table.")
+        val answer = scheduleService.getEmpByResp(id)
+        if (answer.isNullOrEmpty())
+            throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist in this table.")
+        else
+            return answer
     }
 
 
     @GetMapping("/schedule/getByDate")
     fun findByDate(@RequestParam("date") date: LocalDate): List<ScheduleList>? {
-        return scheduleService.getEmpByDate(date)
-            ?: throw ResponseStatusException(NOT_FOUND, "This date does not exist in this table.")
+        val answer = scheduleService.getEmpByDate(date)
+        if (answer.isNullOrEmpty())
+            throw ResponseStatusException(NOT_FOUND, "This date does not exist in this table.")
+        else
+            return answer
     }
 
 
-    // TODO: change request type to json - ?
-    @GetMapping("/schedule/resp/{id}/date/{year}/{month}/{day}/{id}")
-    fun findByDateAndResp(@PathVariable("year") year: String,
-                          @PathVariable("month") month: String,
-                          @PathVariable("day") day: String,
-                          @PathVariable("id") id: Int): ScheduleList? {
-        var dateString = "$year-$month-$day"
-        val dateDate = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE)
-        return scheduleService.getEmpByDateAndResp(dateDate, id)
+    @GetMapping("/schedule/getBy")
+    fun findByDateAndResp(@RequestHeader("Date") date: LocalDate,
+                          @RequestHeader("Resp") respId: Int): ScheduleList? {
+        return scheduleService.getEmpByDateAndResp(date, respId)
+            ?: throw ResponseStatusException(NOT_FOUND, "This date or responsibility does not exist in this table.")
     }
 
 
@@ -149,10 +155,17 @@ class RespController(val respService: ResponsibilitiesService) {
 
     @DeleteMapping("/responsibilities/{id}")
     fun deleteResp(@PathVariable("id") id: Int) {
-        if (respService.getRespById(id) == null)
-            throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist.")
-        else
-            respService.deleteResp(id)
+        try {
+            if (respService.getRespById(id) == null)
+                throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist.")
+            else
+                respService.deleteResp(id)
+        }
+        catch(ex: DbActionExecutionException) {
+            throw ResponseStatusException(
+                BAD_REQUEST,
+                "This responsibility exists in Schedule table and cannot be deleted.")
+        }
     }
 
 
@@ -171,7 +184,13 @@ class RespController(val respService: ResponsibilitiesService) {
 
     @PatchMapping("/responsibilities/clear")
     fun clearTable() {
-        respService.clearTable()
+        try {
+            respService.clearTable()
+        }
+        catch (ex: UncategorizedSQLException) {
+            throw ResponseStatusException(
+                BAD_REQUEST, "These responsibilities exist in Schedule table and cannot be deleted.")
+        }
     }
 }
 
@@ -209,10 +228,16 @@ class EmployeeController(val empService: EmployeeService) {
 
     @DeleteMapping("/employees/{id}")
     fun deleteEmp(@PathVariable("id") id: Int) {
-        if (empService.getEmpById(id) == null)
-            throw ResponseStatusException(NOT_FOUND, "This employee does not exist.")
-        else
-            empService.deleteEmp(id)
+        try {
+            if (empService.getEmpById(id) == null)
+                throw ResponseStatusException(NOT_FOUND, "This employee does not exist.")
+            else
+                empService.deleteEmp(id)
+        }
+        catch(ex: DbActionExecutionException) {
+            throw ResponseStatusException(BAD_REQUEST, "This employee exists in Schedule table and cannot be deleted.")
+        }
+
     }
 
 
@@ -230,7 +255,13 @@ class EmployeeController(val empService: EmployeeService) {
 
     @PatchMapping("/employee/clear")
     fun clearTable() {
-        empService.clearTable()
+        try {
+            empService.clearTable()
+        }
+        catch (ex: UncategorizedSQLException) {
+            throw ResponseStatusException(
+                BAD_REQUEST, "These employees exist in Schedule table and cannot be deleted.")
+        }
     }
 
 }
