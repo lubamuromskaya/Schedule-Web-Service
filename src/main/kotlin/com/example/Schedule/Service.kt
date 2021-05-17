@@ -5,41 +5,43 @@ import java.time.LocalDate
 
 @Service
 class ScheduleService(val db: ScheduleRepository) {
-    // get full Schedule table with all information
     fun getAllInfo(): List<ScheduleList>? = db.getAllInfo()
 
-    fun getByScheduleId(id: Int): ScheduleList? = db.getByScheduleId(id)
+    fun getScheduleById(id: Int): ScheduleList? = db.getScheduleById(id)
 
     fun getAllByEmpId(id: Int): List<ScheduleList>? = db.getAllByEmpId(id)
 
-    // get employee by responsibility id
-    fun getEmpByResp(respId: Int): List<ScheduleList>? = db.getEmpByResp(respId)
+    fun getAllByRespId(respId: Int): List<ScheduleList>? = db.getAllByRespId(respId)
 
-    // get employees with their responsibilities by date
-    fun getEmpByDate(date: LocalDate): List<ScheduleList>? = db.getEmpByDate(date)
+    fun getAllByDate(date: LocalDate): List<ScheduleList>? = db.getAllByDate(date)
 
-    // get employee by date and responsibility id
-    fun getEmpByDateAndResp(date: LocalDate, respId: Int): ScheduleList? = db.getEmpByDateAndResp(date, respId)
+    fun getAllByDateAndResp(date: LocalDate, respId: Int): ScheduleList? = db.getAllByDateAndResp(date, respId)
 
-    // delete all information from table
+    fun ascSortById(): List<ScheduleList>? = db.ascendingSortById()
+
+    fun descSortById(): List<ScheduleList>? = db.descendingSortById()
+
+    fun postSchedule(newSchedule: ScheduleList): ScheduleList = db.save(newSchedule)
+
+    fun updateSchedule(scheduleId: Int, empId: Int, respId: Int, start: LocalDate, end: LocalDate)
+        = db.updateSchedule(scheduleId, empId, respId, start, end)
+
     fun clearTable() = db.clearTable()
 
-    // post new employee with responsibility, date of starting and date of ending in Schedule
-    fun postSchedule(newSchedule: ScheduleList): ScheduleList = db.save(newSchedule) // using default save method
-
-    // delete employee with his responsibility from Schedule
     fun deleteSchedule(scheduleId: Int) = db.deleteSchedule(scheduleId)
 
     fun deleteOldSchedules(date: LocalDate) = db.deleteOldSchedules(date)
-
-    fun updateSchedule(scheduleId: Int, empId: Int, respId: Int, start: LocalDate, end: LocalDate) = db.updateSchedule(scheduleId, empId, respId, start, end)
-
 }
 
 @Service
 class ResponsibilitiesService(val db: ResponsibilitiesRepository) {
-    // get list of responsibilities
     fun getRespList(): List<Responsibility>? = db.getRespList()
+
+    fun getDaysNumberById(id: Int): Long = db.getDaysNumberById(id)
+
+    fun getRespById(id: Int): Responsibility? = db.getRespById(id)
+
+    fun isExists(respName: String, daysNumber: Int): Responsibility? = db.isExists(respName, daysNumber)
 
     fun ascSortById(): List<Responsibility>? = db.ascendingSortById()
 
@@ -49,24 +51,20 @@ class ResponsibilitiesService(val db: ResponsibilitiesRepository) {
 
     fun descSortByName(): List<Responsibility>? = db.descendingSortByName()
 
-    fun getDaysNumberById(id: Int): Long = db.getDaysNumberById(id)
-
-    fun getRespById(id: Int): Responsibility? = db.getRespById(id)
-
-    fun isExists(respName: String, daysNumber: Int): Responsibility? = db.isExists(respName, daysNumber)
-
     fun updateResp(id: Int, name: String, days: Int) = db.updateResp(id, name, days)
 
     fun clearTable() = db.clearTable()
 
-    fun postResp(newResp: Responsibility): Responsibility = db.save(newResp) // using default save method
+    fun postResp(newResp: Responsibility): Responsibility = db.save(newResp)
 
-    fun deleteResp(id: Int) = db.deleteById(id) // using default delete method
+    fun deleteResp(id: Int) = db.deleteById(id)
 }
 
 @Service
 class EmployeeService(val db: EmployeeRepository) {
     fun getEmpList(): List<Employee>? = db.getEmpList()
+
+    fun getEmpById(id: Int): Employee? = db.getEmpById(id)
 
     fun ascSortById(): List<Employee>? = db.ascendingSortById()
 
@@ -76,14 +74,12 @@ class EmployeeService(val db: EmployeeRepository) {
 
     fun descSortByName(): List<Employee>? = db.descendingSortByName()
 
-    fun getEmpById(id: Int): Employee? = db.getEmpById(id)
-
     fun updateEmp(id: Int, name: String) = db.updateEmp(id, name)
 
     fun clearTable() = db.clearTable()
 
-    fun postEmp(emp: Employee) = db.save(emp) // using default save method
+    fun postEmp(emp: Employee): Employee = db.save(emp)
 
-    fun deleteEmp(id: Int) = db.deleteById(id) // using default delete method
+    fun deleteEmp(id: Int) = db.deleteById(id)
 
 }

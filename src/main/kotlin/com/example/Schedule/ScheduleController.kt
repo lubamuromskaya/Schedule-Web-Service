@@ -13,18 +13,26 @@ class ScheduleController(val scheduleService: ScheduleService,
                          val respService: ResponsibilitiesService,
                          val empService: EmployeeService) {
     @GetMapping("/schedule")
-    fun getAllInfo(): List<ScheduleList>? = scheduleService.getAllInfo()
+    fun getAllInfo(@RequestParam("ordering") orderType: String?): List<ScheduleList>? {
+        if (orderType.isNullOrEmpty())
+            return scheduleService.ascSortById()
+        if (orderType.contentEquals("id"))
+            return scheduleService.ascSortById()
+        if (orderType.contentEquals("-id"))
+            return scheduleService.descSortById()
+        return scheduleService.getAllInfo()
+    }
 
 
     @GetMapping("/schedule/getById")
-    fun findBySchdId(@RequestParam("id") id: Int): ScheduleList? {
-        return scheduleService.getByScheduleId(id)
+    fun getScheduleById(@RequestParam("id") id: Int): ScheduleList? {
+        return scheduleService.getScheduleById(id)
             ?: throw ResponseStatusException(NOT_FOUND, "Schedule with this id does not exist.")
     }
 
 
     @GetMapping("/schedule/getEmp")
-    fun findByEmpId(@RequestParam("id") id: Int): List<ScheduleList>? {
+    fun getByEmp(@RequestParam("id") id: Int): List<ScheduleList>? {
         val answer = scheduleService.getAllByEmpId(id)
         if (answer.isNullOrEmpty())
             throw ResponseStatusException(NOT_FOUND, "This employee does not exist in this table.")
@@ -34,8 +42,8 @@ class ScheduleController(val scheduleService: ScheduleService,
 
 
     @GetMapping("/schedule/getResp")
-    fun findByResp(@RequestParam("id") id: Int): List<ScheduleList>? {
-        val answer = scheduleService.getEmpByResp(id)
+    fun getByResp(@RequestParam("id") id: Int): List<ScheduleList>? {
+        val answer: List<ScheduleList>? = scheduleService.getAllByRespId(id)
         if (answer.isNullOrEmpty())
             throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist in this table.")
         else
@@ -44,8 +52,8 @@ class ScheduleController(val scheduleService: ScheduleService,
 
 
     @GetMapping("/schedule/getByDate")
-    fun findByDate(@RequestParam("date") date: LocalDate): List<ScheduleList>? {
-        val answer = scheduleService.getEmpByDate(date)
+    fun getByDate(@RequestParam("date") date: LocalDate): List<ScheduleList>? {
+        val answer: List<ScheduleList>? = scheduleService.getAllByDate(date)
         if (answer.isNullOrEmpty())
             throw ResponseStatusException(NOT_FOUND, "This date does not exist in this table.")
         else
@@ -54,9 +62,9 @@ class ScheduleController(val scheduleService: ScheduleService,
 
 
     @GetMapping("/schedule/getBy")
-    fun findByDateAndResp(@RequestHeader("Date") date: LocalDate,
-                          @RequestHeader("Resp") respId: Int): ScheduleList? {
-        return scheduleService.getEmpByDateAndResp(date, respId)
+    fun getByDateAndResp(@RequestHeader("Date") date: LocalDate,
+                         @RequestHeader("Resp") respId: Int): ScheduleList? {
+        return scheduleService.getAllByDateAndResp(date, respId)
             ?: throw ResponseStatusException(NOT_FOUND, "This date or responsibility does not exist in this table.")
     }
 
@@ -82,7 +90,7 @@ class ScheduleController(val scheduleService: ScheduleService,
             throw ResponseStatusException(NOT_FOUND, "Responsibility with this id does not exist in Responsibilities table.")
         if (empService.getEmpById(newSchedule.employee_id) == null)
             throw ResponseStatusException(NOT_FOUND, "Employee with this id does not exist in Employee table.")
-        if (scheduleService.getByScheduleId(newSchedule.id) == null)
+        if (scheduleService.getScheduleById(newSchedule.id) == null)
             throw ResponseStatusException(NOT_FOUND, "Schedule with this id does not exist in Schedule table.")
         else {
             val daysNumber: Long = respService.getDaysNumberById(newSchedule.responsibility_id)
@@ -104,7 +112,7 @@ class ScheduleController(val scheduleService: ScheduleService,
 
     @DeleteMapping("/schedule")
     fun deleteSchedule(@RequestParam("id") id: Int) {
-        if (scheduleService.getByScheduleId(id) == null)
+        if (scheduleService.getScheduleById(id) == null)
             throw ResponseStatusException(NOT_FOUND, "This date does not exist in this table.")
         else
             scheduleService.deleteSchedule(id)
@@ -113,7 +121,7 @@ class ScheduleController(val scheduleService: ScheduleService,
 
     @DeleteMapping("/schedule/deleteOld")
     fun deleteOldSchedules() {
-        val currentDate = LocalDate.now()
+        val currentDate: LocalDate = LocalDate.now()
         scheduleService.deleteOldSchedules(currentDate)
     }
 
@@ -148,7 +156,7 @@ class RespController(val respService: ResponsibilitiesService) {
     @ResponseBody
     fun postResp(@RequestBody newResp: Responsibility): Responsibility  {
         if (respService.db.isExists(newResp.responsibility_name, newResp.days_number) != null)
-            throw ResponseStatusException(BAD_REQUEST, "This responsibility is already exists.")
+            throw ResponseStatusException(BAD_REQUEST, "This responsibility already exists.")
         return respService.postResp(newResp)
     }
 
@@ -161,7 +169,7 @@ class RespController(val respService: ResponsibilitiesService) {
             else
                 respService.deleteResp(id)
         }
-        catch(ex: DbActionExecutionException) {
+        catch (ex: DbActionExecutionException) {
             throw ResponseStatusException(
                 BAD_REQUEST,
                 "This responsibility exists in Schedule table and cannot be deleted.")
@@ -176,7 +184,7 @@ class RespController(val respService: ResponsibilitiesService) {
         val name: String = resp.responsibility_name
         val days: Int = resp.days_number
         if (respService.getRespById(id) == null)
-            throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist")
+            throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist.")
         else {
             respService.updateResp(id, name, days)
         }
@@ -234,7 +242,7 @@ class EmployeeController(val empService: EmployeeService) {
             else
                 empService.deleteEmp(id)
         }
-        catch(ex: DbActionExecutionException) {
+        catch (ex: DbActionExecutionException) {
             throw ResponseStatusException(BAD_REQUEST, "This employee exists in Schedule table and cannot be deleted.")
         }
 
