@@ -5,11 +5,15 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	kotlin("jvm") version "1.4.32"
 	kotlin("plugin.spring") version "1.4.32"
+
+	application
+	`java-library`
 }
 
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
+val mainClassName = "com.example.Schedule.Main"
 
 repositories {
 	mavenCentral()
@@ -30,6 +34,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
 	runtimeOnly("org.postgresql:postgresql")
+
+
 }
 
 tasks.withType<KotlinCompile> {
@@ -42,3 +48,13 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+	mainClass.set(mainClassName)
+}
+
+//artifacts {
+	//add("archives", jar)
+//}
+
+
