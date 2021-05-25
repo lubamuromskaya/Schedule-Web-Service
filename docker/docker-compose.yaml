@@ -1,0 +1,36 @@
+version: '3.7'
+
+networks:
+  lubamurrnet:
+    name: lubamurrnet
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/8
+
+services:
+  db:
+    image: postgres
+    container_name: db
+    build:
+      context: db/
+#    networks:
+#      lubamurrnet:
+#        ipv4_address: 10.1.1.1
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/lib/postgresql/lubamurr_db_volume
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+
+  app:
+    container_name: app
+    build:
+      context: app/
+    depends_on:
+      - db
+#    networks:
+#      lubamurrnet:
+#        ipv4_address: 10.1.2.1
