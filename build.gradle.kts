@@ -13,7 +13,7 @@ plugins {
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
-val mainClassName = "com.example.Schedule.Main"
+val myMainClass = "com.example.Schedule.Main"
 
 repositories {
 	mavenCentral()
@@ -50,7 +50,7 @@ tasks.withType<Test> {
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-	mainClass.set(mainClassName)
+	mainClass.set(myMainClass)
 }
 
 //artifacts {
