@@ -1,4 +1,4 @@
-database.sql
+database.backup
 -- файл для восстановления базы данных на своем postgresql сервере
 
 Schedule.postman_collection.json
