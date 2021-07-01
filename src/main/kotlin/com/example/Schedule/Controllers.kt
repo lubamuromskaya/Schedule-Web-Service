@@ -13,15 +13,13 @@ class ScheduleController(val scheduleService: ScheduleService,
                          val respService: ResponsibilitiesService,
                          val empService: EmployeeService) {
     @GetMapping("/schedule")
-    fun getAllInfo(@RequestParam("ordering") orderType: String?): List<ScheduleList>? {
-        if (orderType.isNullOrEmpty())
-            return scheduleService.ascSortById()
-        if (orderType.contentEquals("id"))
-            return scheduleService.ascSortById()
-        if (orderType.contentEquals("-id"))
-            return scheduleService.descSortById()
-        return scheduleService.getAllInfo()
-    }
+    fun getAllInfo(@RequestParam("ordering") orderType: String?): List<ScheduleList>? =
+        when (orderType) {
+            "id" -> scheduleService.ascSortById()
+            "-id" -> scheduleService.descSortById()
+            else -> scheduleService.getAllInfo()
+        }
+
 
 
     @GetMapping("/schedule/getById")
@@ -72,13 +70,13 @@ class ScheduleController(val scheduleService: ScheduleService,
     @PostMapping("/schedule")
     @ResponseBody
     fun postSchedule(@RequestBody newSchedule: ScheduleList): ScheduleList? {
-        if (respService.getRespById(newSchedule.responsibility_id) == null)
+        if (respService.getRespById(newSchedule.responsibilityId) == null)
             throw ResponseStatusException(NOT_FOUND, "Responsibility with this id does not exist in Responsibilities table.")
-        if (empService.getEmpById(newSchedule.employee_id) == null)
+        if (empService.getEmpById(newSchedule.employeeId) == null)
             throw ResponseStatusException(NOT_FOUND, "Employee with this id does not exist in Employee table.")
         else {
-            val daysNumber: Long = respService.getDaysNumberById(newSchedule.responsibility_id)
-            newSchedule.responsibility_end = newSchedule.responsibility_start.plusDays(daysNumber)
+            val daysNumber: Long = respService.getDaysNumberById(newSchedule.responsibilityId)
+            newSchedule.responsibilityEnd = newSchedule.responsibilityStart.plusDays(daysNumber)
             return scheduleService.postSchedule(newSchedule)
         }
     }
@@ -86,20 +84,20 @@ class ScheduleController(val scheduleService: ScheduleService,
     @PatchMapping("/schedule")
     @ResponseBody
     fun updateSchedule(@RequestBody newSchedule: ScheduleList) {
-        if (respService.getRespById(newSchedule.responsibility_id) == null)
+        if (respService.getRespById(newSchedule.responsibilityId) == null)
             throw ResponseStatusException(NOT_FOUND, "Responsibility with this id does not exist in Responsibilities table.")
-        if (empService.getEmpById(newSchedule.employee_id) == null)
+        if (empService.getEmpById(newSchedule.employeeId) == null)
             throw ResponseStatusException(NOT_FOUND, "Employee with this id does not exist in Employee table.")
         if (scheduleService.getScheduleById(newSchedule.id) == null)
             throw ResponseStatusException(NOT_FOUND, "Schedule with this id does not exist in Schedule table.")
         else {
-            val daysNumber: Long = respService.getDaysNumberById(newSchedule.responsibility_id)
-            newSchedule.responsibility_end = newSchedule.responsibility_start.plusDays(daysNumber)
+            val daysNumber: Long = respService.getDaysNumberById(newSchedule.responsibilityId)
+            newSchedule.responsibilityEnd = newSchedule.responsibilityStart.plusDays(daysNumber)
 
-            return scheduleService.updateSchedule(newSchedule.id, newSchedule.employee_id,
-                                                    newSchedule.responsibility_id,
-                                                    newSchedule.responsibility_start,
-                                                    newSchedule.responsibility_end)
+            return scheduleService.updateSchedule(newSchedule.id, newSchedule.employeeId,
+                                                    newSchedule.responsibilityId,
+                                                    newSchedule.responsibilityStart,
+                                                    newSchedule.responsibilityEnd)
         }
     }
 
@@ -131,19 +129,15 @@ class ScheduleController(val scheduleService: ScheduleService,
 @RestController
 class RespController(val respService: ResponsibilitiesService) {
     @GetMapping("/responsibilities")
-    fun getRespList(@RequestParam("ordering") orderType: String?): List<Responsibility>? {
-        if (orderType.isNullOrEmpty())
-            return respService.ascSortById()
-        if (orderType.contentEquals("id"))
-            return respService.ascSortById()
-        if (orderType.contentEquals("-id"))
-            return respService.descSortById()
-        if (orderType.contentEquals("name"))
-            return respService.ascSortByName()
-        if (orderType.contentEquals("-name"))
-            return respService.descSortByName()
-        return respService.getRespList()
-    }
+    fun getRespList(@RequestParam("ordering") orderType: String?): List<Responsibility>? =
+        when (orderType) {
+            "id" -> respService.ascSortById()
+            "-id" -> respService.descSortById()
+            "name" -> respService.ascSortByName()
+            "-name" -> respService.descSortByName()
+            else -> respService.getRespList()
+        }
+
 
 
     @GetMapping("/responsibilities/{id}")
@@ -155,7 +149,7 @@ class RespController(val respService: ResponsibilitiesService) {
     @PostMapping("/responsibilities")
     @ResponseBody
     fun postResp(@RequestBody newResp: Responsibility): Responsibility  {
-        if (respService.db.isExists(newResp.responsibility_name, newResp.days_number) != null)
+        if (respService.db.isExists(newResp.responsibilityName, newResp.daysNumber) != null)
             throw ResponseStatusException(BAD_REQUEST, "This responsibility already exists.")
         return respService.postResp(newResp)
     }
@@ -180,9 +174,9 @@ class RespController(val respService: ResponsibilitiesService) {
     @PatchMapping("/responsibilities")
     @ResponseBody
     fun updateResp(@RequestBody resp: Responsibility) {
-        val id: Int = resp.responsibility_id
-        val name: String = resp.responsibility_name
-        val days: Int = resp.days_number
+        val id: Int = resp.responsibilityId
+        val name: String = resp.responsibilityName
+        val days: Int = resp.daysNumber
         if (respService.getRespById(id) == null)
             throw ResponseStatusException(NOT_FOUND, "This responsibility does not exist.")
         else {
@@ -207,19 +201,15 @@ class RespController(val respService: ResponsibilitiesService) {
 @RequestMapping
 class EmployeeController(val empService: EmployeeService) {
     @GetMapping("/employees")
-    fun getEmpList(@RequestParam("ordering") orderType: String?): List<Employee>? {
-        if (orderType.isNullOrEmpty())
-            return empService.ascSortById()
-        if (orderType.contentEquals("id"))
-            return empService.ascSortById()
-        if (orderType.contentEquals("-id"))
-            return empService.descSortById()
-        if (orderType.contentEquals("name"))
-            return empService.ascSortByName()
-        if (orderType.contentEquals("-name"))
-            return empService.descSortByName()
-        return empService.getEmpList()
-    }
+    fun getEmpList(@RequestParam("ordering") orderType: String?): List<Employee>? =
+        when (orderType) {
+            "id" -> empService.ascSortById()
+            "-id" -> empService.descSortById()
+            "name" -> empService.ascSortByName()
+            "-name" -> empService.descSortByName()
+            else -> empService.getEmpList()
+        }
+
 
 
     @GetMapping("/employees/{id}")
@@ -252,8 +242,8 @@ class EmployeeController(val empService: EmployeeService) {
     @PatchMapping("/employees")
     @ResponseBody
     fun updateEmp(@RequestBody emp: Employee) {
-        val id: Int = emp.employee_id
-        val name: String = emp.employee_name
+        val id: Int = emp.employeeId
+        val name: String = emp.employeeName
         if (empService.getEmpById(id) == null)
             throw ResponseStatusException(NOT_FOUND, "This employee does not exist.")
         else {

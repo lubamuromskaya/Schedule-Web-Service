@@ -1,5 +1,3 @@
-@file:JvmName("Main")
-
 package com.example.Schedule
 
 import org.springframework.boot.autoconfigure.SpringBootApplication

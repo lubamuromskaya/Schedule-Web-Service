@@ -9,8 +9,6 @@ import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.TemporalType
 
-// объектное представление данных в бд
-
 @Table("schedule")
 data class ScheduleList(
     @Id
@@ -19,18 +17,18 @@ data class ScheduleList(
     val id: Int = 0,
 
     @Column("employee_id")
-    val employee_id: Int,
+    val employeeId: Int,
 
     @Column("responsibility_id")
-    val responsibility_id: Int,
+    val responsibilityId: Int,
 
     @Column("responsibility_start")
     @Temporal(TemporalType.DATE)
-    var responsibility_start: LocalDate,
+    var responsibilityStart: LocalDate,
 
     @Column("responsibility_end")
     @Temporal(TemporalType.DATE)
-    var responsibility_end: LocalDate = LocalDate.now()
+    var responsibilityEnd: LocalDate = LocalDate.now()
 )
 
 @Table("responsibilities")
@@ -38,13 +36,13 @@ data class Responsibility(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column("responsibility_id")
-    val responsibility_id: Int = 0,
+    val responsibilityId: Int = 0,
 
     @Column("responsibility_name")
-    val responsibility_name: String,
+    val responsibilityName: String,
 
     @Column("days_number")
-    val days_number: Int
+    val daysNumber: Int
 )
 
 
@@ -53,8 +51,8 @@ data class Employee(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column("employee_id")
-    var employee_id: Int = 0,
+    var employeeId: Int = 0,
 
     @Column("employee_name")
-    val employee_name: String
+    val employeeName: String
 )
