@@ -1,4 +1,4 @@
-database.sql
+database.backup
 -- файл для восстановления базы данных на своем postgresql сервере
 
 Schedule.postman_collection.json
@@ -6,3 +6,5 @@ Schedule.postman_collection.json
 
 application.properties
 -- содержит необходимую для подключения к базе данных конфигурацию
+
+была начата работа с docker (файлы хранятся в директории docker), но до рабочего состояния доведено не было
