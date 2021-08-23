@@ -170,6 +170,9 @@ gradle-app.setting
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
 
+### spring develop configuration
+application-dev.*
+
 ### Gradle Patch ###
 **/build/
 
