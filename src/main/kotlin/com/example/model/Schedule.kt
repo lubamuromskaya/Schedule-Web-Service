@@ -1,4 +1,4 @@
-package com.example.Schedule
+package com.example.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.jpa.repository.Temporal
@@ -29,30 +29,4 @@ data class ScheduleList(
     @Column("responsibility_end")
     @Temporal(TemporalType.DATE)
     var responsibilityEnd: LocalDate = LocalDate.now()
-)
-
-@Table("responsibilities")
-data class Responsibility(
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column("responsibility_id")
-    val responsibilityId: Int = 0,
-
-    @Column("responsibility_name")
-    val responsibilityName: String,
-
-    @Column("days_number")
-    val daysNumber: Int
-)
-
-
-@Table("employee")
-data class Employee(
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column("employee_id")
-    var employeeId: Int = 0,
-
-    @Column("employee_name")
-    val employeeName: String
 )
