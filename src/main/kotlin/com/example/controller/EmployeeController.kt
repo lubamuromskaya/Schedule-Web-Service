@@ -13,11 +13,11 @@ class EmployeeController(val empService: EmployeeService) {
     @GetMapping
     fun getEmpList(@RequestParam("ordering") orderType: String?): List<Employee>? =
         when (orderType) {
-            "id" -> empService.ascSortById()
-            "-id" -> empService.descSortById()
-            "name" -> empService.ascSortByName()
-            "-name" -> empService.descSortByName()
-            else -> empService.ascSortById()
+            "id" -> empService.getByIdSortedAsc()
+            "-id" -> empService.getByIdSortedDesc()
+            "name" -> empService.getByNameSortedAsc()
+            "-name" -> empService.getByNameSortedDesc()
+            else -> empService.getByIdSortedAsc()
         }
 
     @GetMapping("/{id}")
@@ -27,7 +27,7 @@ class EmployeeController(val empService: EmployeeService) {
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     fun postEmp(@RequestBody emp: Employee): Employee {
-        return empService.postEmp(emp)
+        return empService.post(emp)
     }
 
     @DeleteMapping("/{id}")
@@ -35,7 +35,7 @@ class EmployeeController(val empService: EmployeeService) {
         if (empService.getEmpById(id) == null)
             throw ResponseStatusException(NOT_FOUND, "This employee does not exist.")
         else
-            empService.deleteEmp(id)
+            empService.delete(id)
     }
 
     @PatchMapping("/{id}")
@@ -43,7 +43,7 @@ class EmployeeController(val empService: EmployeeService) {
         if (empService.getEmpById(id) == null)
             throw ResponseStatusException(NOT_FOUND, "This employee does not exist.")
         else {
-            empService.updateEmp(id, emp)
+            empService.update(id, emp)
         }
     }
 

@@ -18,9 +18,9 @@ class ScheduleController(val scheduleService: ScheduleService,
     @GetMapping
     fun getAllInfo(@RequestParam("ordering") orderType: String?): List<Schedule>? =
         when (orderType) {
-            "id" -> scheduleService.ascSortById()
-            "-id" -> scheduleService.descSortById()
-            else -> scheduleService.ascSortById()
+            "id" -> scheduleService.getByIdSortedAsc()
+            "-id" -> scheduleService.getByIdSortedDesc()
+            else -> scheduleService.getByIdSortedAsc()
         }
 
     @GetMapping("/{id}")
@@ -52,7 +52,7 @@ class ScheduleController(val scheduleService: ScheduleService,
         else {
             val daysNumber: Int = respService.getDaysNumberById(newSchedule.responsibilityId)
             newSchedule.endDate = newSchedule.startDate.plusDays(daysNumber.toLong() - 1)
-            return scheduleService.postSchedule(newSchedule)
+            return scheduleService.post(newSchedule)
         }
     }
 
@@ -68,7 +68,7 @@ class ScheduleController(val scheduleService: ScheduleService,
             val daysNumber: Int = respService.getDaysNumberById(schedule.responsibilityId)
             schedule.endDate = schedule.startDate.plusDays(daysNumber.toLong())
 
-            return scheduleService.updateSchedule(id, schedule)
+            return scheduleService.update(id, schedule)
         }
     }
 

@@ -13,11 +13,11 @@ class ResponsibilityController(val respService: ResponsibilityService) {
     @GetMapping
     fun getRespList(@RequestParam("ordering") orderType: String?): List<Responsibility>? =
         when (orderType) {
-            "id" -> respService.ascSortById()
-            "-id" -> respService.descSortById()
-            "name" -> respService.ascSortByName()
-            "-name" -> respService.descSortByName()
-            else -> respService.ascSortById()
+            "id" -> respService.getByIdSortedAsc()
+            "-id" -> respService.getByIdSortedDesc()
+            "name" -> respService.getByNameSortedAsc()
+            "-name" -> respService.getByNameSortedDesc()
+            else -> respService.getByIdSortedAsc()
         }
 
     @GetMapping("/{id}")
@@ -28,7 +28,7 @@ class ResponsibilityController(val respService: ResponsibilityService) {
     @ResponseStatus(code = HttpStatus.CREATED)
     fun postResp(@RequestBody newResp: Responsibility): Responsibility {
         try {
-            return respService.postResp(newResp)
+            return respService.post(newResp)
         } catch (ex: DataIntegrityViolationException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "This responsibility already exists.")
         }
@@ -39,7 +39,7 @@ class ResponsibilityController(val respService: ResponsibilityService) {
         if (respService.getRespById(id) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "This responsibility does not exist.")
         else
-            respService.deleteResp(id)
+            respService.delete(id)
     }
 
     @PatchMapping("/{id}")
@@ -47,7 +47,7 @@ class ResponsibilityController(val respService: ResponsibilityService) {
         if (respService.getRespById(id) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "This responsibility does not exist.")
         else {
-            respService.updateResp(id, resp)
+            respService.update(id, resp)
         }
     }
 

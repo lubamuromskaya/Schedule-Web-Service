@@ -10,12 +10,12 @@ interface ScheduleRepository : PagingAndSortingRepository<Schedule, Int> {
 
     fun getAllByResponsibilityId(respId: Int): List<Schedule>
 
-    @Query("select * from Schedule where :date between start_date and end_date", nativeQuery = true)
+    @Query("select s from Schedule s where :date between start_date and end_date")
     fun getAllByDate(date: LocalDate): List<Schedule>
 
     @Query(
-        "select * from Schedule where responsibility_id = :respId " +
-                "and :date between start_date and end_date", nativeQuery = true
+        "select s from Schedule s where responsibility_id = :respId " +
+                "and :date between start_date and end_date"
     )
     fun getAllByDateAndResp(date: LocalDate, respId: Int): Schedule?
 
