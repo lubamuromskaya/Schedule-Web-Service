@@ -1,6 +1,6 @@
 package com.example.controller
 
-import com.example.model.ScheduleList
+import com.example.model.Schedule
 import com.example.service.EmployeeService
 import com.example.service.ResponsibilityService
 import com.example.service.ScheduleService
@@ -10,106 +10,82 @@ import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 
 @RestController
+@RequestMapping("/schedule")
 class ScheduleController(val scheduleService: ScheduleService,
                          val respService: ResponsibilityService,
                          val empService: EmployeeService
 ) {
-    @GetMapping("/schedule")
-    fun getAllInfo(@RequestParam("ordering") orderType: String?): List<ScheduleList>? =
+    @GetMapping
+    fun getAllInfo(@RequestParam("ordering") orderType: String?): List<Schedule>? =
         when (orderType) {
             "id" -> scheduleService.ascSortById()
             "-id" -> scheduleService.descSortById()
-            else -> scheduleService.getAllInfo()
+            else -> scheduleService.ascSortById()
         }
 
-    @GetMapping("/schedule/getById")
-    fun getScheduleById(@RequestParam("id") id: Int): ScheduleList? {
+    @GetMapping("/{id}")
+    fun getScheduleById(@PathVariable("id") id: Int): Schedule? {
         return scheduleService.getScheduleById(id)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule with this id does not exist.")
     }
 
-    @GetMapping("/schedule/getEmp")
-    fun getByEmp(@RequestParam("id") id: Int): List<ScheduleList>? {
-        val answer = scheduleService.getAllByEmpId(id)
-        if (answer.isNullOrEmpty())
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "This employee does not exist in this table.")
-        else
-            return answer
-    }
+    @GetMapping("/emp/{id}")
+    fun getByEmp(@PathVariable("id") id: Int): List<Schedule>? = scheduleService.getAllByEmpId(id)
 
-    @GetMapping("/schedule/getResp")
-    fun getByResp(@RequestParam("id") id: Int): List<ScheduleList>? {
-        val answer: List<ScheduleList>? = scheduleService.getAllByRespId(id)
-        if (answer.isNullOrEmpty())
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "This responsibility does not exist in this table.")
-        else
-            return answer
-    }
+    @GetMapping("/resp/{id}")
+    fun getByResp(@PathVariable("id") id: Int): List<Schedule>? = scheduleService.getAllByRespId(id)
 
-    @GetMapping("/schedule/getByDate")
-    fun getByDate(@RequestParam("date") date: LocalDate): List<ScheduleList>? {
-        val answer: List<ScheduleList>? = scheduleService.getAllByDate(date)
-        if (answer.isNullOrEmpty())
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "This date does not exist in this table.")
-        else
-            return answer
-    }
+    @GetMapping("/date/{date}")
+    fun getByDate(@PathVariable("date") date: LocalDate): List<Schedule>? = scheduleService.getAllByDate(date)
 
-    @GetMapping("/schedule/getBy")
-    fun getByDateAndResp(@RequestHeader("Date") date: LocalDate,
-                         @RequestHeader("Resp") respId: Int): ScheduleList? {
-        return scheduleService.getAllByDateAndResp(date, respId)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "This date or responsibility does not exist in this table.")
-    }
+    @GetMapping("/date/{date}/resp/{resp}")
+    fun getByDateAndResp(@PathVariable("date") date: LocalDate,
+                         @PathVariable("resp") respId: Int): Schedule? = scheduleService.getAllByDateAndResp(date, respId)
 
-    @PostMapping("/schedule")
-    @ResponseBody
-    fun postSchedule(@RequestBody newSchedule: ScheduleList): ScheduleList? {
+    @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    fun postSchedule(@RequestBody newSchedule: Schedule): Schedule? {
         if (respService.getRespById(newSchedule.responsibilityId) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Responsibility with this id does not exist in Responsibilities table.")
         if (empService.getEmpById(newSchedule.employeeId) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Employee with this id does not exist in Employee table.")
         else {
-            val daysNumber: Long = respService.getDaysNumberById(newSchedule.responsibilityId)
-            newSchedule.responsibilityEnd = newSchedule.responsibilityStart.plusDays(daysNumber)
+            val daysNumber: Int = respService.getDaysNumberById(newSchedule.responsibilityId)
+            newSchedule.endDate = newSchedule.startDate.plusDays(daysNumber.toLong() - 1)
             return scheduleService.postSchedule(newSchedule)
         }
     }
 
-    @PatchMapping("/schedule")
-    @ResponseBody
-    fun updateSchedule(@RequestBody newSchedule: ScheduleList) {
-        if (respService.getRespById(newSchedule.responsibilityId) == null)
+    @PatchMapping("/{id}")
+    fun updateSchedule(@PathVariable("id") id: Int, @RequestBody schedule: Schedule): Schedule {
+        if (respService.getRespById(schedule.responsibilityId) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Responsibility with this id does not exist in Responsibilities table.")
-        if (empService.getEmpById(newSchedule.employeeId) == null)
+        if (empService.getEmpById(schedule.employeeId) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Employee with this id does not exist in Employee table.")
-        if (scheduleService.getScheduleById(newSchedule.id) == null)
+        if (scheduleService.getScheduleById(schedule.id) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule with this id does not exist in Schedule table.")
         else {
-            val daysNumber: Long = respService.getDaysNumberById(newSchedule.responsibilityId)
-            newSchedule.responsibilityEnd = newSchedule.responsibilityStart.plusDays(daysNumber)
+            val daysNumber: Int = respService.getDaysNumberById(schedule.responsibilityId)
+            schedule.endDate = schedule.startDate.plusDays(daysNumber.toLong())
 
-            return scheduleService.updateSchedule(newSchedule.id, newSchedule.employeeId,
-                newSchedule.responsibilityId,
-                newSchedule.responsibilityStart,
-                newSchedule.responsibilityEnd)
+            return scheduleService.updateSchedule(id, schedule)
         }
     }
 
-    @PatchMapping("/schedule/clear")
+    @DeleteMapping("/clear")
     fun clearTable() {
         scheduleService.clearTable()
     }
 
-    @DeleteMapping("/schedule")
-    fun deleteSchedule(@RequestParam("id") id: Int) {
+    @DeleteMapping("/{id}")
+    fun deleteSchedule(@PathVariable("id") id: Int) {
         if (scheduleService.getScheduleById(id) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "This date does not exist in this table.")
         else
             scheduleService.deleteSchedule(id)
     }
 
-    @DeleteMapping("/schedule/deleteOld")
+    @DeleteMapping("/deleteOld")
     fun deleteOldSchedules() {
         val currentDate: LocalDate = LocalDate.now()
         scheduleService.deleteOldSchedules(currentDate)

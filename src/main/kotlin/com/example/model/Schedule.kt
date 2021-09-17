@@ -1,32 +1,26 @@
 package com.example.model
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.jpa.repository.Temporal
-import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
+import javax.persistence.Entity
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.TemporalType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.SequenceGenerator
 
-@Table("schedule")
-data class ScheduleList(
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column("id")
-    val id: Int = 0,
+@Entity
+class Schedule(
+    @javax.persistence.Id
+    @SequenceGenerator(name = "schedule_generator", sequenceName = "schedule_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "schedule_generator")
+    var id: Int,
 
-    @Column("employee_id")
-    val employeeId: Int,
+    @JoinColumn(name = "employee_id")
+    var employeeId: Int,
 
-    @Column("responsibility_id")
-    val responsibilityId: Int,
+    @JoinColumn(name = "responsibility_id")
+    var responsibilityId: Int,
 
-    @Column("responsibility_start")
-    @Temporal(TemporalType.DATE)
-    var responsibilityStart: LocalDate,
+    var startDate: LocalDate,
 
-    @Column("responsibility_end")
-    @Temporal(TemporalType.DATE)
-    var responsibilityEnd: LocalDate = LocalDate.now()
+    var endDate: LocalDate = LocalDate.now()
 )

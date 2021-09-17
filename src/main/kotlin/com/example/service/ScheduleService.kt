@@ -1,36 +1,35 @@
 package com.example.service
 
-import com.example.model.ScheduleList
+import com.example.model.Schedule
 import com.example.repository.ScheduleRepository
+import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
 class ScheduleService(val db: ScheduleRepository) {
-    fun getAllInfo(): List<ScheduleList>? = db.getAllInfo()
+    fun getScheduleById(id: Int): Schedule? = db.findByIdOrNull(id)
 
-    fun getScheduleById(id: Int): ScheduleList? = db.getScheduleById(id)
+    fun getAllByEmpId(id: Int): List<Schedule>? = db.getAllByEmployeeId(id)
 
-    fun getAllByEmpId(id: Int): List<ScheduleList>? = db.getAllByEmpId(id)
+    fun getAllByRespId(respId: Int): List<Schedule>? = db.getAllByResponsibilityId(respId)
 
-    fun getAllByRespId(respId: Int): List<ScheduleList>? = db.getAllByRespId(respId)
+    fun getAllByDate(date: LocalDate): List<Schedule>? = db.getAllByDate(date)
 
-    fun getAllByDate(date: LocalDate): List<ScheduleList>? = db.getAllByDate(date)
+    fun getAllByDateAndResp(date: LocalDate, respId: Int): Schedule? = db.getAllByDateAndResp(date, respId)
 
-    fun getAllByDateAndResp(date: LocalDate, respId: Int): ScheduleList? = db.getAllByDateAndResp(date, respId)
+    fun ascSortById(): List<Schedule>? = db.findAll(Sort.by("id")).toList()
 
-    fun ascSortById(): List<ScheduleList>? = db.ascendingSortById()
+    fun descSortById(): List<Schedule>? = db.findAll(Sort.by(Sort.Direction.DESC, "id")).toList()
 
-    fun descSortById(): List<ScheduleList>? = db.descendingSortById()
+    fun postSchedule(newSchedule: Schedule): Schedule = db.save(newSchedule)
 
-    fun postSchedule(newSchedule: ScheduleList): ScheduleList = db.save(newSchedule)
+    fun updateSchedule(id: Int, schedule: Schedule) = schedule.apply { this.id = id }.let(db::save)
 
-    fun updateSchedule(scheduleId: Int, empId: Int, respId: Int, start: LocalDate, end: LocalDate)
-            = db.updateSchedule(scheduleId, empId, respId, start, end)
+    fun clearTable() = db.deleteAll()
 
-    fun clearTable() = db.clearTable()
+    fun deleteSchedule(scheduleId: Int) = db.deleteById(scheduleId)
 
-    fun deleteSchedule(scheduleId: Int) = db.deleteSchedule(scheduleId)
-
-    fun deleteOldSchedules(date: LocalDate) = db.deleteOldSchedules(date)
+    fun deleteOldSchedules(date: LocalDate) = db.deleteByEndDateLessThan(date)
 }

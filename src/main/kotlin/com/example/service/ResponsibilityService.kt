@@ -2,29 +2,27 @@ package com.example.service
 
 import com.example.model.Responsibility
 import com.example.repository.ResponsibilityRepository
+import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class ResponsibilityService(val db: ResponsibilityRepository) {
-    fun getRespList(): List<Responsibility>? = db.getRespList()
+    fun getDaysNumberById(id: Int): Int = db.findById(id).get().daysNumber
 
-    fun getDaysNumberById(id: Int): Long = db.getDaysNumberById(id)
+    fun getRespById(id: Int): Responsibility? = db.findByIdOrNull(id)
 
-    fun getRespById(id: Int): Responsibility? = db.getRespById(id)
+    fun ascSortById(): List<Responsibility>? = db.findAll(Sort.by("id")).toList()
 
-    fun isExists(respName: String, daysNumber: Int): Responsibility? = db.isExists(respName, daysNumber)
+    fun descSortById(): List<Responsibility>? = db.findAll(Sort.by(Sort.Direction.DESC, "id")).toList()
 
-    fun ascSortById(): List<Responsibility>? = db.ascendingSortById()
+    fun ascSortByName(): List<Responsibility>? = db.findAll(Sort.by("name")).toList()
 
-    fun descSortById(): List<Responsibility>? = db.descendingSortById()
+    fun descSortByName(): List<Responsibility>? = db.findAll(Sort.by(Sort.Direction.DESC, "name")).toList()
 
-    fun ascSortByName(): List<Responsibility>? = db.ascendingSortByName()
+    fun updateResp(id: Int, resp: Responsibility) = resp.apply { this.id = id }.let(db::save)
 
-    fun descSortByName(): List<Responsibility>? = db.descendingSortByName()
-
-    fun updateResp(id: Int, name: String, days: Int) = db.updateResp(id, name, days)
-
-    fun clearTable() = db.clearTable()
+    fun clearTable() = db.deleteAll()
 
     fun postResp(newResp: Responsibility): Responsibility = db.save(newResp)
 

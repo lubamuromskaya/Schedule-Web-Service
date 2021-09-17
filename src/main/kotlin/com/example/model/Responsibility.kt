@@ -1,21 +1,23 @@
 package com.example.model
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
+import javax.persistence.CascadeType
+import javax.persistence.Entity
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.OneToMany
+import javax.persistence.SequenceGenerator
 
-@Table("responsibilities")
-data class Responsibility(
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column("responsibility_id")
-    val responsibilityId: Int = 0,
+@Entity
+class Responsibility(
+    @javax.persistence.Id
+    @SequenceGenerator(name = "responsibility_generator", sequenceName = "responsibility_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "responsibility_generator")
+    var id: Int,
 
-    @Column("responsibility_name")
-    val responsibilityName: String,
+    var name: String,
 
-    @Column("days_number")
-    val daysNumber: Int
+    var daysNumber: Int,
+
+    @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "responsibilityId")
+    var schedules: List<Schedule> = emptyList()
 )

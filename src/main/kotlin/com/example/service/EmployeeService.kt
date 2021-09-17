@@ -2,25 +2,25 @@ package com.example.service
 
 import com.example.model.Employee
 import com.example.repository.EmployeeRepository
+import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class EmployeeService(val db: EmployeeRepository) {
-    fun getEmpList(): List<Employee>? = db.getEmpList()
+    fun getEmpById(id: Int): Employee? = db.findByIdOrNull(id)
 
-    fun getEmpById(id: Int): Employee? = db.getEmpById(id)
+    fun ascSortById(): List<Employee>? = db.findAll(Sort.by("id")).toList()
 
-    fun ascSortById(): List<Employee>? = db.ascendingSortById()
+    fun descSortById(): List<Employee>? = db.findAll(Sort.by(Sort.Direction.DESC, "id")).toList()
 
-    fun descSortById(): List<Employee>? = db.descendingSortById()
+    fun ascSortByName(): List<Employee>? = db.findAll(Sort.by("name")).toList()
 
-    fun ascSortByName(): List<Employee>? = db.ascendingSortByName()
+    fun descSortByName(): List<Employee>? = db.findAll(Sort.by(Sort.Direction.DESC, "name")).toList()
 
-    fun descSortByName(): List<Employee>? = db.descendingSortByName()
+    fun updateEmp(id: Int, emp: Employee) = emp.apply { this.id = id }.let(db::save)
 
-    fun updateEmp(id: Int, name: String) = db.updateEmp(id, name)
-
-    fun clearTable() = db.clearTable()
+    fun clearTable() = db.deleteAll()
 
     fun postEmp(emp: Employee): Employee = db.save(emp)
 
