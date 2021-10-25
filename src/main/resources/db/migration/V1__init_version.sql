@@ -34,10 +34,10 @@ create table if not exists schedule
         constraint schedule_pkey
             primary key,
     employee_id integer not null
-        constraint schedule_employee_id_fkey
+        constraint employee_id_fkey
             references employee,
     responsibility_id integer not null
-        constraint schedule_responsibility_id_fkey
+        constraint responsibility_id_fkey
             references responsibility,
     start_date date,
     end_date date
