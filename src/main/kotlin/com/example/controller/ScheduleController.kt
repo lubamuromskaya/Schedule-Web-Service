@@ -46,7 +46,7 @@ class ScheduleController(val scheduleService: ScheduleService,
     @ResponseStatus(code = HttpStatus.CREATED)
     fun postSchedule(@RequestBody newSchedule: Schedule): Schedule? {
         if (respService.getRespById(newSchedule.responsibilityId) == null)
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Responsibility with this id does not exist in Responsibilities table.")
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Responsibility with this id does not exist in Responsibility table.")
         if (empService.getEmpById(newSchedule.employeeId) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Employee with this id does not exist in Employee table.")
         else {
@@ -59,10 +59,10 @@ class ScheduleController(val scheduleService: ScheduleService,
     @PatchMapping("/{id}")
     fun updateSchedule(@PathVariable("id") id: Int, @RequestBody schedule: Schedule): Schedule {
         if (respService.getRespById(schedule.responsibilityId) == null)
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Responsibility with this id does not exist in Responsibilities table.")
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Responsibility with this id does not exist in Responsibility table.")
         if (empService.getEmpById(schedule.employeeId) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Employee with this id does not exist in Employee table.")
-        if (scheduleService.getScheduleById(schedule.id) == null)
+        if (scheduleService.getScheduleById(id) == null)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule with this id does not exist in Schedule table.")
         else {
             val daysNumber: Int = respService.getDaysNumberById(schedule.responsibilityId)
@@ -80,7 +80,7 @@ class ScheduleController(val scheduleService: ScheduleService,
     @DeleteMapping("/{id}")
     fun deleteSchedule(@PathVariable("id") id: Int) {
         if (scheduleService.getScheduleById(id) == null)
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "This date does not exist in this table.")
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "This schedule does not exist in this table.")
         else
             scheduleService.deleteSchedule(id)
     }
