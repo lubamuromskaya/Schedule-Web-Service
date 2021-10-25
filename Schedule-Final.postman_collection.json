@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "82a14b4f-2437-4a48-ae4e-886e4885f2aa",
+		"_postman_id": "344b41b3-6cce-4d53-9044-0c1420a7e57d",
 		"name": "Schedule",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,24 +9,24 @@
 			"name": "GET",
 			"item": [
 				{
-					"name": "employees",
+					"name": "employee",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/employees?ordering=id",
+							"raw": "http://localhost:9090/employee?ordering=-id",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"employees"
+								"employee"
 							],
 							"query": [
 								{
 									"key": "ordering",
-									"value": "id"
+									"value": "-id"
 								}
 							]
 						}
@@ -34,19 +34,19 @@
 					"response": []
 				},
 				{
-					"name": "responsibilities",
+					"name": "responsibility",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/responsibilities?ordering=-id",
+							"raw": "http://localhost:9090/responsibility?ordering=-id",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"responsibilities"
+								"responsibility"
 							],
 							"query": [
 								{
@@ -89,14 +89,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/employees/13",
+							"raw": "http://localhost:9090/employee/13",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"employees",
+								"employee",
 								"13"
 							]
 						}
@@ -109,14 +109,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/responsibilities/1",
+							"raw": "http://localhost:9090/responsibility/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"responsibilities",
+								"responsibility",
 								"1"
 							]
 						}
@@ -129,7 +129,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/schedule/getEmp?id=10",
+							"raw": "http://localhost:9090/schedule/emp/10",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -137,13 +137,8 @@
 							"port": "9090",
 							"path": [
 								"schedule",
-								"getEmp"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "10"
-								}
+								"emp",
+								"10"
 							]
 						}
 					},
@@ -155,7 +150,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/schedule/getResp?id=4",
+							"raw": "http://localhost:9090/schedule/resp/4",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -163,13 +158,8 @@
 							"port": "9090",
 							"path": [
 								"schedule",
-								"getResp"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "4"
-								}
+								"resp",
+								"4"
 							]
 						}
 					},
@@ -181,7 +171,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/schedule/getByDate?date=2021-05-14",
+							"raw": "http://localhost:9090/schedule/date/2021-05-14",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -189,13 +179,8 @@
 							"port": "9090",
 							"path": [
 								"schedule",
-								"getByDate"
-							],
-							"query": [
-								{
-									"key": "date",
-									"value": "2021-05-14"
-								}
+								"date",
+								"2021-05-14"
 							]
 						}
 					},
@@ -207,7 +192,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/schedule/getById?id=1",
+							"raw": "http://localhost:9090/schedule/9",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -215,13 +200,7 @@
 							"port": "9090",
 							"path": [
 								"schedule",
-								"getById"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "1"
-								}
+								"9"
 							]
 						}
 					},
@@ -244,7 +223,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:9090/schedule/getBy",
+							"raw": "http://localhost:9090/schedule/date/2021-05-10/resp/5",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -252,7 +231,10 @@
 							"port": "9090",
 							"path": [
 								"schedule",
-								"getBy"
+								"date",
+								"2021-05-10",
+								"resp",
+								"5"
 							]
 						}
 					},
@@ -270,7 +252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"employee_name\" : \"maria b\"\n}",
+							"raw": "{\n    \"name\" : \"new emp\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -278,14 +260,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:9090/employees",
+							"raw": "http://localhost:9090/employee",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"employees"
+								"employee"
 							]
 						}
 					},
@@ -298,7 +280,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"responsibility_name\" : \"cto\",\n    \"days_number\" : 80\n}",
+							"raw": "{\n    \"name\" : \"new_resp\",\n    \"daysNumber\" : 30\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -306,14 +288,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:9090/responsibilities",
+							"raw": "http://localhost:9090/responsibility",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"responsibilities"
+								"responsibility"
 							]
 						}
 					},
@@ -326,7 +308,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"employee_id\" : 21,\n    \"responsibility_id\" : 10,\n    \"responsibility_start\" : \"2021-05-17\"\n}",
+							"raw": "{\n    \"employeeId\" : 23,\n    \"responsibilityId\" : 11,\n    \"startDate\" : \"2021-10-25\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -358,15 +340,15 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/employees/10",
+							"raw": "http://localhost:9090/employee/22",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"employees",
-								"10"
+								"employee",
+								"22"
 							]
 						}
 					},
@@ -378,15 +360,15 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/responsibilities/4",
+							"raw": "http://localhost:9090/responsibility/11",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"responsibilities",
-								"4"
+								"responsibility",
+								"11"
 							]
 						}
 					},
@@ -398,7 +380,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/schedule/deleteOld",
+							"raw": "http://localhost:9090/schedule/delete-old",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -406,7 +388,7 @@
 							"port": "9090",
 							"path": [
 								"schedule",
-								"deleteOld"
+								"delete-old"
 							]
 						}
 					},
@@ -418,20 +400,15 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/schedule?id=3",
+							"raw": "http://localhost:9090/schedule/0",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"schedule"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "3"
-								}
+								"schedule",
+								"0"
 							]
 						}
 					},
@@ -449,7 +426,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"employee_id\" : 20,\n    \"employee_name\" : \"eugene krabs\"\n}",
+							"raw": "{\n    \"name\" : \"eugene krabs\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -457,14 +434,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:9090/employees",
+							"raw": "http://localhost:9090/employee/23",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"employees"
+								"employee",
+								"23"
 							]
 						}
 					},
@@ -477,7 +455,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"responsibility_id\" : 2,\n    \"responsibility_name\" : \"cpp programmer\",\n    \"days_number\" : 30\n}",
+							"raw": "{\n    \"name\" : \"python\",\n    \"daysNumber\" : 33\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -485,14 +463,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:9090/responsibilities",
+							"raw": "http://localhost:9090/responsibility/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"responsibilities"
+								"responsibility",
+								"1"
 							]
 						}
 					},
@@ -505,7 +484,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": 7,\n    \"employee_id\": 21,\n    \"responsibility_id\": 10,\n    \"responsibility_start\": \"2021-05-10\"\n}",
+							"raw": "{\n    \"employeeId\" : 20,\n    \"responsibilityId\" : 2,\n    \"startDate\" : \"2021-10-25\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -513,14 +492,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:9090/schedule",
+							"raw": "http://localhost:9090/schedule/9",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"schedule"
+								"schedule",
+								"9"
 							]
 						}
 					},
@@ -534,7 +514,7 @@
 				{
 					"name": "schedule",
 					"request": {
-						"method": "PATCH",
+						"method": "DELETE",
 						"header": [],
 						"url": {
 							"raw": "http://localhost:9090/schedule/clear",
@@ -554,7 +534,7 @@
 				{
 					"name": "employee",
 					"request": {
-						"method": "PATCH",
+						"method": "DELETE",
 						"header": [],
 						"url": {
 							"raw": "http://localhost:9090/employee/clear",
@@ -574,17 +554,17 @@
 				{
 					"name": "responsibilities",
 					"request": {
-						"method": "PATCH",
+						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9090/responsibilities/clear",
+							"raw": "http://localhost:9090/responsibility/clear",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "9090",
 							"path": [
-								"responsibilities",
+								"responsibility",
 								"clear"
 							]
 						}

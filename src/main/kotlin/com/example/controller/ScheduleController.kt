@@ -85,7 +85,7 @@ class ScheduleController(val scheduleService: ScheduleService,
             scheduleService.deleteSchedule(id)
     }
 
-    @DeleteMapping("/deleteOld")
+    @DeleteMapping("/delete-old")
     fun deleteOldSchedules() {
         val currentDate: LocalDate = LocalDate.now()
         scheduleService.deleteOldSchedules(currentDate)
