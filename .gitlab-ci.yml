@@ -1,0 +1,68 @@
+stages:
+  - lint
+  - test
+  - build
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH || $CI_COMMIT_TAG'
+
+.with-gradle:
+  image: gradle:6.6.1-jdk11
+
+.tests: &tests |-
+  gradle test
+
+.jib: &jib
+  - gradle jib
+    -Djib.to.image=path-to-image-folder:$IMAGE_TAG
+    -Djib.to.auth.username=$CI_REGISTRY_USER
+    -Djib.to.auth.password=$CI_REGISTRY_PASSWORD
+    -Djib.from.image=java:11
+    -Djib.allowInsecureRegistries=true
+    -Djib.console=plain
+
+sws-lint:
+  stage: lint
+  image: ktlint:0.39.0
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: never
+    - changes:
+        - '**/*[!.md]'
+  script:
+    - ktlint --color .
+
+sws-test:
+  stage: test
+  extends: .with-gradle
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  script:
+    - *tests
+
+sws-build:
+  stage: build
+  extends: .with-gradle
+  rules:
+    - if: '$CI_COMMIT_TAG'
+  variables:
+    IMAGE_TAG: '$CI_COMMIT_TAG'
+  script:
+    - *jib
+
+sws-test-and-build:
+  stage: build
+  extends: .with-gradle
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_BRANCH != "master"'
+  variables:
+    IMAGE_TAG: '$CI_COMMIT_SHORT_SHA'
+  script:
+    - *tests
+    - *jib
