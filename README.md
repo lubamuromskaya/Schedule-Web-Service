@@ -1,5 +1,12 @@
 # Schedule Web Service
 
+## Description of project
+
+#### Web Service allows you to communicate with database (Postgres) by HTTP requests (get, write, delete information). 
+#### Database contains schedule: information about employees, their responsibilities and the time interval when they are responsible for it.
+
+There is a file with database migration in `/src/main/resources/` to restore database with right structure.
+
 ## Employee
 ### GET
 #### employees
